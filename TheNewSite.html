@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anti-DDoS Test Sitesi</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+      max-width: 700px;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px 30px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #60a5fa;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      margin-bottom: 2.5rem;
+    }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .stat-box {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 20px 30px;
+      min-width: 160px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #3b82f6;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 1rem;
+      color: #cbd5e1;
+    }
+    .message {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin: 2rem 0;
+      color: #cbd5e1;
+    }
+    .footer {
+      margin-top: 3rem;
+      font-size: 0.95rem;
+      color: #64748b;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      .stats { gap: 1.5rem; }
+      .stat-box { min-width: 140px; padding: 16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Anti-DDoS Test Sitesi</h1>
+    <div class="subtitle">
+      Sunucunun dayanıklılığını test etmek için buradasınız
+    </div>
+
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-number" id="requestCount">0</div>
+        <div class="stat-label">Toplam İstek</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="uniqueIPs">0</div>
+        <div class="stat-label">Benzersiz IP</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="requestsPerSec">0</div>
+        <div class="stat-label">Saniyedeki İstek</div>
+      </div>
+    </div>
+
+    <div class="message">
+      Bu sayfa Cloudflare, BunnyCDN, Gcore veya benzeri bir koruma katmanı arkasında çalışıyorsa,<br>
+      gerçek bir DDoS testi için oldukça iyi bir hedef olabilir.
+    </div>
+
+    <div class="footer">
+      Bu sadece bir test sayfasıdır • Gerçek üretim ortamında kullanılmaz
+    </div>
+  </div>
+
+  <script>
+    let requestCount = 0;
+    let uniqueIPs = new Set();
+    let lastSecond = Math.floor(Date.now() / 1000);
+    let reqThisSecond = 0;
+
+    // Her 800ms'de sahte artış (gerçek testte bu kısım istemci tarafında çalışmaz, sadece görsel)
+    setInterval(() => {
+      requestCount += Math.floor(Math.random() * 8) + 3;
+      document.getElementById('requestCount').textContent = requestCount.toLocaleString();
+
+      // Saniyelik istek simülasyonu
+      const now = Math.floor(Date.now() / 1000);
+      if (now !== lastSecond) {
+        document.getElementById('requestsPerSec').textContent = reqThisSecond;
+        reqThisSecond = 0;
+        lastSecond = now;
+      }
+      reqThisSecond += Math.floor(Math.random() * 5) + 2;
+    }, 800);
+
+    // Benzersiz IP simülasyonu (gerçekte server tarafında yapılır)
+    setInterval(() => {
+      if (Math.random() > 0.7) {
+        uniqueIPs.add("fake-ip-" + Math.floor(Math.random() * 10000));
+        document.getElementById('uniqueIPs').textContent = uniqueIPs.size;
+      }
+    }, 4500);
+  </script>
+
+</body>
+</html>
